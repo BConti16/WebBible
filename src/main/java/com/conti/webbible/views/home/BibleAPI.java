@@ -54,4 +54,16 @@ public class BibleAPI {
 		return this;
 	}
 	
+	public BibleAPI executeQuery(String book, String chapter, String verses) throws UnirestException {
+		String query = prepareQuery(book, chapter, verses);
+		
+		try {
+			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
+			this.lastResultString = response.getHeaders().get("text").toString();
+		}catch(UnirestException e) {
+			//do nothing
+		}
+		return this;
+	}
+	
 }
