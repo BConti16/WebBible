@@ -22,7 +22,7 @@ public class BibleAPI {
 	public BibleAPI() {
 		this.host = "https://bible-api.com/";
 		this.verseNumParam = "?verse_numbers=true";
-		this.queryCache = new ArrayList<String>(10);
+		this.queryCache = new ArrayList<String>(100);
 		this.gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 	
