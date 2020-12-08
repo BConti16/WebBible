@@ -12,14 +12,30 @@ import java.util.ArrayList;
 
 public class BibleAPI {
 	private String host;
-	private String translationParam;
+	private String verseNumParam;
 	private final String charset = "UTF-8";
 	private ArrayList<String> queryCache;
 	
 	public BibleAPI() {
 		this.host = "https://bible-api.com/";
-		this.translationParam = "?translation=kjv";
-		this.queryCache = new ArrayList<String>();
+		this.verseNumParam = "?verse_numbers=true";
+		this.queryCache = new ArrayList<String>(10);
+	}
+	
+	private String prepareQuery(String parameters) {
+		String formattedParams = parameters.replace(' ', '+');
+		return this.host + formattedParams + this.verseNumParam;
+	}
+	
+	private String prepareQuery(String book, String chapter, String verses) {
+		String formattedParams;
+		if(verses.equals("") || verses.equals(null)) {
+			formattedParams = book + "+" + chapter;
+		}else {
+			formattedParams = book + "+" + chapter + ":" + verses;
+		}
+		
+		return this.host + formattedParams + this.verseNumParam;
 	}
 	
 }
