@@ -42,28 +42,34 @@ public class BibleAPI {
 		return this.host + formattedParams + this.verseNumParam;
 	}
 	
-	public BibleAPI executeQuery(String parameters) throws UnirestException {
+	public BibleAPI executeQuery(String parameters) {
 		String query = prepareQuery(parameters);
+		this.queryCache.add(new String(query));
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
-			this.lastResultString = response.getHeaders().get("text").toString();
+			this.lastResultString = response.getHeaders().getFirst("text");
 		}catch(UnirestException e) {
-			//do nothing
+			this.lastResultString = "";
 		}
 		return this;
 	}
 	
-	public BibleAPI executeQuery(String book, String chapter, String verses) throws UnirestException {
+	public BibleAPI executeQuery(String book, String chapter, String verses) {
 		String query = prepareQuery(book, chapter, verses);
+		this.queryCache.add(new String(query));
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
-			this.lastResultString = response.getHeaders().get("text").toString();
+			this.lastResultString = response.getHeaders().getFirst("text");
 		}catch(UnirestException e) {
-			//do nothing
+			this.lastResultString = "";
 		}
 		return this;
+	}
+	
+	public String getResults() {
+		return this.lastResultString;
 	}
 	
 }
