@@ -107,13 +107,21 @@ public class HomeView extends HorizontalLayout {
             clearSearchTextFields();
             if(results.equals("") || results.equals(null)) {
             	handleBlankResults();
+            }else {
+            	resultView.setValue(results);
             }
         });
         
         advancedSearch.addClickListener(e -> {
         	resultView.clear();
-        	resultView.setValue(fullSearch.getValue());
+        	//resultView.setValue(fullSearch.getValue());
+        	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
+        	if(results.equals("") || results.equals(null)) {
+        		handleBlankResults();
+        	}else {
+        		resultView.setValue(results);
+        	}
         });
     }
     
