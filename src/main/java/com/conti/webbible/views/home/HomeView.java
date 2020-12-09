@@ -105,7 +105,7 @@ public class HomeView extends HorizontalLayout {
             //resultView.setValue(bookName.getValue() + " " + chapter.getValue() + ":" + verses.getValue());
             String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
             clearSearchTextFields();
-            if(results.equals("") || results.equals(null)) {
+            if( results == null || results.equals("")) {
             	handleBlankResults();
             }else {
             	resultView.setValue(results);
@@ -117,7 +117,7 @@ public class HomeView extends HorizontalLayout {
         	//resultView.setValue(fullSearch.getValue());
         	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
-        	if(results.equals("") || results.equals(null)) {
+        	if(results == null || results.equals("")) {
         		handleBlankResults();
         	}else {
         		resultView.setValue(results);
