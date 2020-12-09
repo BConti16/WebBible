@@ -1,32 +1,24 @@
 package com.conti.webbible.views.home;
 
-import java.net.URLEncoder;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONObject;
 
 public class BibleAPI {
 	private String host;
 	private String verseNumParam;
-	private final String charset = "UTF-8";
-	private ArrayList<String> queryCache;
-	private Gson gson;
+	private TreeMap<String, String> queryCache;
 	private String lastResultString;
 	
 	public BibleAPI() {
 		this.host = "https://bible-api.com/";
 		this.verseNumParam = "?verse_numbers=true";
-		this.queryCache = new ArrayList<String>(100);
-		this.gson = new GsonBuilder().setPrettyPrinting().create();
+		this.queryCache = new TreeMap<String, String>();
 	}
 	
 	private String prepareQuery(String parameters) {
@@ -47,36 +39,72 @@ public class BibleAPI {
 	
 	public BibleAPI executeQuery(String parameters) {
 		String query = prepareQuery(parameters);
-		this.queryCache.add(new String(query));
+		
+		//check if query has already been run
+		if(this.queryCache.containsKey(query)) {
+			//get the results from cache and exit
+			this.lastResultString = this.queryCache.get(query);
+			return this;
+		}
+		//this.queryCache.put(new String(query), "");
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
 			JSONObject responseObject = response.getBody().getObject();
 			this.lastResultString = responseObject.getString("text");
-			//this.lastResultString = response.getHeaders().get("text").get(0);
+			
+			//put query and results into the cache
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}catch(UnirestException e) {
+			
+			//If exception is caught, set last results to empty and add to query
 			this.lastResultString = "";
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}
 		return this;
 	}
 	
 	public BibleAPI executeQuery(String book, String chapter, String verses) {
 		String query = prepareQuery(book, chapter, verses);
-		this.queryCache.add(new String(query));
+		
+		//check if query has been run before
+		if(this.queryCache.containsKey(query)) {
+			//get results from cache and return
+			this.lastResultString = this.queryCache.get(query);
+			return this;
+		}
+		//this.queryCache.put(new String(query), "");
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
 			JSONObject responseObject = response.getBody().getObject();
 			this.lastResultString = responseObject.getString("text");
-			//this.lastResultString = response.getHeaders().get("text").get(0);
+			
+			//add query and results to the cache
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}catch(UnirestException e) {
+			
+			//If exception is caught, set last results to empty and add to query
 			this.lastResultString = "";
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}
 		return this;
 	}
 	
 	public String getResults() {
 		return this.lastResultString;
+	}
+	
+	public String getCachedQueries() {
+		//Set to empty string in case no queries have been stored
+		String queries = "";
+		
+		//Loop through the cached queries and append them to the queries string
+		for(Map.Entry<String, String> e : this.queryCache.entrySet()) {
+			queries += e.getKey() + '\n';
+		}
+		
+		return queries;
 	}
 	
 }
