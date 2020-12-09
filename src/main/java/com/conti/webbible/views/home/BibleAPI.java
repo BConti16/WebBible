@@ -4,9 +4,6 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,16 +12,13 @@ import org.json.JSONObject;
 public class BibleAPI {
 	private String host;
 	private String verseNumParam;
-	private final String charset = "UTF-8";
 	private TreeMap<String, String> queryCache;
-	private Gson gson;
 	private String lastResultString;
 	
 	public BibleAPI() {
 		this.host = "https://bible-api.com/";
 		this.verseNumParam = "?verse_numbers=true";
 		this.queryCache = new TreeMap<String, String>();
-		this.gson = new GsonBuilder().setPrettyPrinting().create();
 	}
 	
 	private String prepareQuery(String parameters) {
