@@ -43,30 +43,54 @@ public class BibleAPI {
 	
 	public BibleAPI executeQuery(String parameters) {
 		String query = prepareQuery(parameters);
-		this.queryCache.put(new String(query), "");
+		
+		//check if query has already been run
+		if(this.queryCache.containsKey(query)) {
+			//get the results from cache and exit
+			this.lastResultString = this.queryCache.get(query);
+			return this;
+		}
+		//this.queryCache.put(new String(query), "");
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
 			JSONObject responseObject = response.getBody().getObject();
 			this.lastResultString = responseObject.getString("text");
-			//this.lastResultString = response.getHeaders().get("text").get(0);
+			
+			//put query and results into the cache
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}catch(UnirestException e) {
+			
+			//If exception is caught, set last results to empty and add to query
 			this.lastResultString = "";
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}
 		return this;
 	}
 	
 	public BibleAPI executeQuery(String book, String chapter, String verses) {
 		String query = prepareQuery(book, chapter, verses);
-		this.queryCache.put(new String(query), "");
+		
+		//check if query has been run before
+		if(this.queryCache.containsKey(query)) {
+			//get results from cache and return
+			this.lastResultString = this.queryCache.get(query);
+			return this;
+		}
+		//this.queryCache.put(new String(query), "");
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
 			JSONObject responseObject = response.getBody().getObject();
 			this.lastResultString = responseObject.getString("text");
-			//this.lastResultString = response.getHeaders().get("text").get(0);
+			
+			//add query and results to the cache
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}catch(UnirestException e) {
+			
+			//If exception is caught, set last results to empty and add to query
 			this.lastResultString = "";
+			this.queryCache.put(new String(query), new String(this.lastResultString));
 		}
 		return this;
 	}
