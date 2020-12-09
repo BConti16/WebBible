@@ -8,8 +8,11 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.ArrayList;
+
+import org.json.JSONObject;
 
 public class BibleAPI {
 	private String host;
@@ -33,7 +36,7 @@ public class BibleAPI {
 	
 	private String prepareQuery(String book, String chapter, String verses) {
 		String formattedParams;
-		if(verses.equals("") || verses.equals(null)) {
+		if(verses == null || verses.equals("")) {
 			formattedParams = book + "+" + chapter;
 		}else {
 			formattedParams = book + "+" + chapter + ":" + verses;
@@ -48,7 +51,9 @@ public class BibleAPI {
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
-			this.lastResultString = response.getHeaders().getFirst("text");
+			JSONObject responseObject = response.getBody().getObject();
+			this.lastResultString = responseObject.getString("text");
+			//this.lastResultString = response.getHeaders().get("text").get(0);
 		}catch(UnirestException e) {
 			this.lastResultString = "";
 		}
@@ -61,7 +66,9 @@ public class BibleAPI {
 		
 		try {
 			HttpResponse<JsonNode> response = Unirest.get(query).asJson();
-			this.lastResultString = response.getHeaders().getFirst("text");
+			JSONObject responseObject = response.getBody().getObject();
+			this.lastResultString = responseObject.getString("text");
+			//this.lastResultString = response.getHeaders().get("text").get(0);
 		}catch(UnirestException e) {
 			this.lastResultString = "";
 		}

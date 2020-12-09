@@ -13,6 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.conti.webbible.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
+import com.conti.webbible.views.home.BibleAPI;
 
 @Route(value = "bible", layout = MainView.class)
 @PageTitle("Home")
@@ -27,6 +28,7 @@ public class HomeView extends HorizontalLayout {
     private TextField fullSearch;
     private Button advancedSearch;
     private TextArea resultView;
+    private BibleAPI bible;
 
     public HomeView() {
         setId("home-view");
@@ -95,16 +97,31 @@ public class HomeView extends HorizontalLayout {
         
         add(layout);
         setVerticalComponentAlignment(Alignment.START, layout);
+        
+        bible = new BibleAPI();
+        
         search.addClickListener(e -> {
         	resultView.clear();
-            resultView.setValue(bookName.getValue() + " " + chapter.getValue() + ":" + verses.getValue());
+            //resultView.setValue(bookName.getValue() + " " + chapter.getValue() + ":" + verses.getValue());
+            String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
             clearSearchTextFields();
+            if( results == null || results.equals("")) {
+            	handleBlankResults();
+            }else {
+            	resultView.setValue(results);
+            }
         });
         
         advancedSearch.addClickListener(e -> {
         	resultView.clear();
-        	resultView.setValue(fullSearch.getValue());
+        	//resultView.setValue(fullSearch.getValue());
+        	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
+        	if(results == null || results.equals("")) {
+        		handleBlankResults();
+        	}else {
+        		resultView.setValue(results);
+        	}
         });
     }
     
@@ -116,6 +133,12 @@ public class HomeView extends HorizontalLayout {
     
     private void clearAdvancedSearchTextFields() {
     	fullSearch.clear();
+    }
+    
+    private void handleBlankResults() {
+    	this.resultView.setInvalid(true);
+    	Notification.show("That search didn't return any results... try again!", 3000, Notification.Position.TOP_CENTER);
+    	this.resultView.setInvalid(false);
     }
 
 }
