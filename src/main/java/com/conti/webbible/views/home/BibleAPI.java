@@ -6,6 +6,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.json.JSONObject;
@@ -97,6 +99,18 @@ public class BibleAPI {
 	
 	public String getResults() {
 		return this.lastResultString;
+	}
+	
+	public String getCachedQueries() {
+		//Set to empty string in case no queries have been stored
+		String queries = "";
+		
+		//Loop through the cached queries and append them to the queries string
+		for(Map.Entry<String, String> e : this.queryCache.entrySet()) {
+			queries += e.getKey() + '\n';
+		}
+		
+		return queries;
 	}
 	
 }
