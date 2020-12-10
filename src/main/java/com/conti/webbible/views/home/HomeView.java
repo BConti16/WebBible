@@ -3,6 +3,7 @@ package com.conti.webbible.views.home;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -28,6 +29,7 @@ public class HomeView extends HorizontalLayout {
     private TextField fullSearch;
     private Button advancedSearch;
     private TextArea resultView;
+    private H3 searchParams;
     private BibleAPI bible;
 
     public HomeView() {
@@ -89,11 +91,15 @@ public class HomeView extends HorizontalLayout {
         resultView.setReadOnly(true);
         resultView.setValue("API Request Text Goes Here");
         
+        searchParams = new H3();
+        searchParams.setId("searchParams");
+        
         VerticalLayout layout = new VerticalLayout();
         layout.setWidthFull();
         layout.setHeightFull();
-        layout.add(title, rowHolder, resultView);
+        layout.add(title, rowHolder, searchParams, resultView);
         layout.setHorizontalComponentAlignment(Alignment.CENTER, title);
+        layout.setHorizontalComponentAlignment(Alignment.START, searchParams);
         
         add(layout);
         setVerticalComponentAlignment(Alignment.START, layout);
@@ -102,7 +108,9 @@ public class HomeView extends HorizontalLayout {
         
         search.addClickListener(e -> {
         	resultView.clear();
-            //resultView.setValue(bookName.getValue() + " " + chapter.getValue() + ":" + verses.getValue());
+            //Update user search parameters
+        	updateSearchParams();
+        	
             String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
             clearSearchTextFields();
             if( results == null || results.equals("")) {
@@ -114,7 +122,9 @@ public class HomeView extends HorizontalLayout {
         
         advancedSearch.addClickListener(e -> {
         	resultView.clear();
-        	//resultView.setValue(fullSearch.getValue());
+        	//Update user search parameters
+        	updateAdvancedSearchParams();
+        	
         	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
         	if(results == null || results.equals("")) {
@@ -133,6 +143,14 @@ public class HomeView extends HorizontalLayout {
     
     private void clearAdvancedSearchTextFields() {
     	fullSearch.clear();
+    }
+    
+    private void updateSearchParams() {
+    	searchParams.setText(bookName.getValue() + " " + chapter.getValue() + ":" + verses.getValue());
+    }
+    
+    private void updateAdvancedSearchParams() {
+    	searchParams.setText(fullSearch.getValue());
     }
     
     private void handleBlankResults() {
