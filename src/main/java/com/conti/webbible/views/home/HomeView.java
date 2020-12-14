@@ -49,6 +49,7 @@ public class HomeView extends HorizontalLayout {
         bookName.setHelperText("e.g. John");
         bookName.setPattern("[A-Z]{1}[a-z]*");
         bookName.setPreventInvalidInput(true);
+        bookName.focus();
         
         chapter = new TextField("Chapter");
         chapter.setHelperText("e.g. 3");
@@ -110,8 +111,10 @@ public class HomeView extends HorizontalLayout {
         rowThree.setSpacing(true);
         rowThree.setMargin(false);
         rowThree.add(searchParams, recentQueries, searchRecents);
-        rowThree.setVerticalComponentAlignment(Alignment.CENTER, searchParams, recentQueries, searchRecents);
-        rowThree.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        rowThree.setVerticalComponentAlignment(Alignment.CENTER, searchParams, recentQueries);
+        rowThree.setVerticalComponentAlignment(Alignment.END, searchRecents);
+        //rowThree.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        rowThree.setFlexGrow(1.15, searchParams);
         
         VerticalLayout layout = new VerticalLayout();
         layout.setWidthFull();
@@ -140,6 +143,7 @@ public class HomeView extends HorizontalLayout {
             }else {
             	resultView.setValue(results);
             }
+            bookName.focus();
         });
         
         advancedSearch.addClickListener(e -> {
@@ -157,6 +161,7 @@ public class HomeView extends HorizontalLayout {
         	}else {
         		resultView.setValue(results);
         	}
+        	fullSearch.focus();
         });
         
         searchRecents.addClickListener(e -> {
