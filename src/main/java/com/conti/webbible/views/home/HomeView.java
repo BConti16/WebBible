@@ -128,6 +128,9 @@ public class HomeView extends HorizontalLayout {
             //Update user search parameters
         	updateSearchParams();
         	
+        	//Add the query to the recent queries dropdown
+        	setRecentQueries();
+        	
             String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
             clearSearchTextFields();
             if( results == null || results.equals("")) {
@@ -141,6 +144,9 @@ public class HomeView extends HorizontalLayout {
         	resultView.clear();
         	//Update user search parameters
         	updateAdvancedSearchParams();
+        	
+        	//Add the query to the recent queries
+        	setRecentQueries();
         	
         	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
@@ -174,6 +180,10 @@ public class HomeView extends HorizontalLayout {
     	this.resultView.setInvalid(true);
     	Notification.show("That search didn't return any results... try again!", 3000, Notification.Position.TOP_CENTER);
     	this.resultView.setInvalid(false);
+    }
+    
+    private void setRecentQueries() {
+    	this.recentQueries.setItems(this.bible.getCachedQueries().split("\n"));
     }
 
 }
