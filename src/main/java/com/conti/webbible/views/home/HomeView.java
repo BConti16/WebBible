@@ -113,6 +113,7 @@ public class HomeView extends HorizontalLayout {
         rowThree.setVerticalComponentAlignment(Alignment.CENTER, searchParams, recentQueries);
         rowThree.setVerticalComponentAlignment(Alignment.BASELINE, searchRecents);
         rowThree.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        rowThree.setFlexGrow(1.15, searchParams);
         
         VerticalLayout layout = new VerticalLayout();
         layout.setWidthFull();
