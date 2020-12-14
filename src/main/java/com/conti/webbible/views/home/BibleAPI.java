@@ -101,10 +101,17 @@ public class BibleAPI {
 		
 		//Loop through the cached queries and append them to the queries string
 		for(Map.Entry<String, String> e : this.queryCache.entrySet()) {
-			queries += e.getKey() + '\n';
+			queries += beautifyQuery(e.getKey()) + '\n';
 		}
 		
 		return queries;
+	}
+	
+	//Takes a raw query (contains url and specifier) and "beautifies" it by returning only the user specified parameters
+	private String beautifyQuery(String uglyQuery) {
+		String beautifiedQuery = uglyQuery.split("/")[3].split("\\?")[0].replace('+', ' ');
+		
+		return beautifiedQuery;
 	}
 	
 }

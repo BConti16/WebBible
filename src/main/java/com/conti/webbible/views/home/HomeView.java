@@ -8,9 +8,11 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.conti.webbible.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
@@ -18,6 +20,7 @@ import com.conti.webbible.views.home.BibleAPI;
 
 @Route(value = "bible", layout = MainView.class)
 @PageTitle("Home")
+@PreserveOnRefresh
 @CssImport("./styles/views/home/home-view.css")
 @RouteAlias(value = "", layout = MainView.class)
 public class HomeView extends HorizontalLayout {
@@ -30,6 +33,8 @@ public class HomeView extends HorizontalLayout {
     private Button advancedSearch;
     private TextArea resultView;
     private H3 searchParams;
+    private Select<String> recentQueries;
+    private Button searchRecents;
     private BibleAPI bible;
 
     public HomeView() {
@@ -94,10 +99,24 @@ public class HomeView extends HorizontalLayout {
         searchParams = new H3();
         searchParams.setId("searchParams");
         
+        recentQueries = new Select<String>();
+        recentQueries.setLabel("Recent Queries");
+        
+        searchRecents = new Button("Display");
+        
+        HorizontalLayout rowThree = new HorizontalLayout();
+        rowThree.setWidth("100%");
+        rowThree.setPadding(false);
+        rowThree.setSpacing(true);
+        rowThree.setMargin(false);
+        rowThree.add(searchParams, recentQueries, searchRecents);
+        rowThree.setVerticalComponentAlignment(Alignment.CENTER, searchParams, recentQueries, searchRecents);
+        rowThree.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        
         VerticalLayout layout = new VerticalLayout();
         layout.setWidthFull();
         layout.setHeightFull();
-        layout.add(title, rowHolder, searchParams, resultView);
+        layout.add(title, rowHolder, rowThree, resultView);
         layout.setHorizontalComponentAlignment(Alignment.CENTER, title);
         layout.setHorizontalComponentAlignment(Alignment.START, searchParams);
         
@@ -112,6 +131,9 @@ public class HomeView extends HorizontalLayout {
         	updateSearchParams();
         	
             String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
+        	//Add the query to the recent queries dropdown
+        	setRecentQueries();
+        	
             clearSearchTextFields();
             if( results == null || results.equals("")) {
             	handleBlankResults();
@@ -126,7 +148,24 @@ public class HomeView extends HorizontalLayout {
         	updateAdvancedSearchParams();
         	
         	String results = bible.executeQuery(fullSearch.getValue()).getResults();
+        	//Add the query to the recent queries
+        	setRecentQueries();
+        	
         	clearAdvancedSearchTextFields();
+        	if(results == null || results.equals("")) {
+        		handleBlankResults();
+        	}else {
+        		resultView.setValue(results);
+        	}
+        });
+        
+        searchRecents.addClickListener(e -> {
+        	resultView.clear();
+        	//Update user search parameters
+        	updateRecentQueryParams();
+        	
+        	//The recent queries are stored like advanced search parameters (all one string)
+        	String results = bible.executeQuery(recentQueries.getValue()).getResults();
         	if(results == null || results.equals("")) {
         		handleBlankResults();
         	}else {
@@ -153,10 +192,18 @@ public class HomeView extends HorizontalLayout {
     	searchParams.setText(fullSearch.getValue());
     }
     
+    private void updateRecentQueryParams() {
+    	searchParams.setText(recentQueries.getValue());
+    }
+    
     private void handleBlankResults() {
     	this.resultView.setInvalid(true);
     	Notification.show("That search didn't return any results... try again!", 3000, Notification.Position.TOP_CENTER);
     	this.resultView.setInvalid(false);
+    }
+    
+    private void setRecentQueries() {
+    	this.recentQueries.setItems(this.bible.getCachedQueries().split("\n"));
     }
 
 }
