@@ -12,6 +12,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.conti.webbible.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
@@ -19,6 +20,7 @@ import com.conti.webbible.views.home.BibleAPI;
 
 @Route(value = "bible", layout = MainView.class)
 @PageTitle("Home")
+@PreserveOnRefresh
 @CssImport("./styles/views/home/home-view.css")
 @RouteAlias(value = "", layout = MainView.class)
 public class HomeView extends HorizontalLayout {
