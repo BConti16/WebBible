@@ -130,10 +130,10 @@ public class HomeView extends HorizontalLayout {
             //Update user search parameters
         	updateSearchParams();
         	
+            String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
         	//Add the query to the recent queries dropdown
         	setRecentQueries();
         	
-            String results = bible.executeQuery(bookName.getValue(), chapter.getValue(), verses.getValue()).getResults();
             clearSearchTextFields();
             if( results == null || results.equals("")) {
             	handleBlankResults();
@@ -147,10 +147,10 @@ public class HomeView extends HorizontalLayout {
         	//Update user search parameters
         	updateAdvancedSearchParams();
         	
+        	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	//Add the query to the recent queries
         	setRecentQueries();
         	
-        	String results = bible.executeQuery(fullSearch.getValue()).getResults();
         	clearAdvancedSearchTextFields();
         	if(results == null || results.equals("")) {
         		handleBlankResults();

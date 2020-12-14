@@ -109,7 +109,7 @@ public class BibleAPI {
 	
 	//Takes a raw query (contains url and specifier) and "beautifies" it by returning only the user specified parameters
 	private String beautifyQuery(String uglyQuery) {
-		String beautifiedQuery = uglyQuery.split("/")[3].split("?")[0].replace('+', ' ');
+		String beautifiedQuery = uglyQuery.split("/")[3].split("\\?")[0].replace('+', ' ');
 		
 		return beautifiedQuery;
 	}
