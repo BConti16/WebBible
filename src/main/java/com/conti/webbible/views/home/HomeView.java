@@ -156,6 +156,20 @@ public class HomeView extends HorizontalLayout {
         		resultView.setValue(results);
         	}
         });
+        
+        searchRecents.addClickListener(e -> {
+        	resultView.clear();
+        	//Update user search parameters
+        	updateRecentQueryParams();
+        	
+        	//The recent queries are stored like advanced search parameters (all one string)
+        	String results = bible.executeQuery(recentQueries.getValue()).getResults();
+        	if(results == null || results.equals("")) {
+        		handleBlankResults();
+        	}else {
+        		resultView.setValue(results);
+        	}
+        });
     }
     
     private void clearSearchTextFields() {
@@ -174,6 +188,10 @@ public class HomeView extends HorizontalLayout {
     
     private void updateAdvancedSearchParams() {
     	searchParams.setText(fullSearch.getValue());
+    }
+    
+    private void updateRecentQueryParams() {
+    	searchParams.setText(recentQueries.getValue());
     }
     
     private void handleBlankResults() {
